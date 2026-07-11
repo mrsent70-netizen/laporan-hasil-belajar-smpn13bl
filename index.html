@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan Hasil Belajar - SMPN 13 Bandar Lampung</title>
+<style>
+  :root{
+    --primary:#0f5132; --primary-dark:#0a3622; --accent:#d4a017;
+    --bg:#f4f6f5; --card:#ffffff; --text:#1e2a24; --muted:#6b7a72; --border:#dfe6e2;
+    --danger:#b3261e;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+  .topbar{background:var(--primary);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+  .topbar h1{font-size:16px;margin:0;font-weight:600;}
+  .topbar .user{font-size:12px;opacity:.9;}
+  .topbar button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:13px;cursor:pointer;}
+  .wrap{max-width:900px;margin:0 auto;padding:16px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .hidden{display:none !important;}
+  h2{font-size:18px;margin:0 0 12px;color:var(--primary-dark);}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px;font-weight:600;}
+  input[type=text],input[type=password],input[type=number],select{
+    width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#fff;color:var(--text);
+  }
+  input:focus,select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+  .btn{display:inline-block;background:var(--primary);color:#fff;border:none;padding:12px 18px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px;}
+  .btn:active{background:var(--primary-dark);}
+  .btn.secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+  .btn.block{width:100%;}
+  .btn.small{padding:8px 12px;font-size:13px;margin-top:0;}
+  .grid-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .menu-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 12px;text-align:center;cursor:pointer;font-weight:600;color:var(--primary-dark);}
+  .menu-item .ico{font-size:28px;display:block;margin-bottom:6px;}
+  .menu-item:active{background:#eaf3ee;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;}
+  th,td{border:1px solid var(--border);padding:8px;text-align:left;}
+  th{background:#eef4f1;font-size:13px;}
+  td input[type=number]{padding:6px;font-size:14px;width:80px;}
+  .msg{padding:10px 12px;border-radius:10px;font-size:14px;margin-top:10px;}
+  .msg.ok{background:#e6f4ea;color:#1e7b34;}
+  .msg.err{background:#fdecea;color:var(--danger);}
+  .checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  .checkitem{display:flex;align-items:center;gap:8px;background:#f7f9f8;border:1px solid var(--border);border-radius:10px;padding:10px;font-size:13px;}
+  .checkitem input{width:auto;}
+  .back-link{color:var(--primary);font-size:14px;cursor:pointer;margin-bottom:10px;display:inline-block;}
+  .login-box{max-width:380px;margin:60px auto;text-align:center;}
+  .login-box img{width:64px;margin-bottom:8px;}
+  .login-box h1{font-size:18px;color:var(--primary-dark);margin:6px 0 2px;}
+  .login-box p{font-size:12px;color:var(--muted);margin-bottom:18px;}
+
+  /* ===== LAPORAN CETAK ===== */
+  .laporan-siswa{background:#fff;border:1px solid #333;padding:20px;margin-bottom:24px;font-size:13px;}
+  .lap-header{text-align:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .lap-header img{width:55px;height:55px;object-fit:contain;}
+  .lap-header .lap-title{flex:1;}
+  .lap-header h3{margin:0;font-size:13px;}
+  .lap-header h2{margin:2px 0;font-size:15px;}
+  .lap-header p{margin:0;font-size:10px;}
+  .lap-judul{text-align:center;font-weight:bold;font-size:14px;margin:10px 0;text-transform:uppercase;}
+  .lap-info{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;}
+  .lap-info div{width:48%;}
+  .lap-info b{display:inline-block;width:130px;}
+  table.lap-table th, table.lap-table td{border:1px solid #000;font-size:12px;padding:5px 6px;}
+  table.lap-table th{background:#e9e9e9;text-align:center;}
+  table.lap-table td.num{text-align:center;}
+  .lap-sign{display:flex;justify-content:space-between;margin-top:26px;font-size:12px;}
+  .lap-sign div{width:45%;text-align:center;}
+  .lap-sign .space{height:60px;}
+  @media print{
+    body *{visibility:hidden;}
+    #cetakArea, #cetakArea *{visibility:visible;}
+    #cetakArea{position:absolute;left:0;top:0;width:100%;}
+    .laporan-siswa{page-break-after:always;border:none;}
+    .no-print{display:none !important;}
+  }
+  @media (max-width:520px){
+    .grid-menu{grid-template-columns:1fr 1fr;}
+    .row2{grid-template-columns:1fr;}
+    .lap-info{flex-direction:column;}
+    .lap-info div{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="viewLogin" class="wrap">
+  <div class="login-box">
+    <img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png" alt="logo">
+    <h1>SMP Negeri 13 Bandar Lampung</h1>
+    <p>Aplikasi Laporan Hasil Belajar Siswa</p>
+    <div class="card" style="text-align:left;">
+      <label>Username</label>
+      <input type="text" id="loginUsername" placeholder="username">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="password">
+      <button class="btn block" onclick="doLogin()">Masuk</button>
+      <div id="loginMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP (setelah login) ============ -->
+<div id="viewApp" class="hidden">
+  <div class="topbar">
+    <h1>Laporan Hasil Belajar</h1>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="user" id="userLabel"></span>
+      <button onclick="logout()">Keluar</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- MENU -->
+    <div id="viewMenu">
+      <div class="grid-menu">
+        <div class="menu-item" onclick="showView('input')"><span class="ico">📝</span>Input Nilai</div>
+        <div class="menu-item" onclick="showView('cetak')"><span class="ico">🖨️</span>Cetak Laporan</div>
+        <div class="menu-item admin-only hidden" onclick="showView('konfig')"><span class="ico">⚙️</span>Pengaturan Laporan</div>
+      </div>
+    </div>
+
+    <!-- INPUT NILAI -->
+    <div id="viewInput" class="hidden">
+      <span class="back-link" onclick="showView('menu')">&larr; Kembali</span>
+      <div class="card">
+        <h2>Input Nilai</h2>
+        <div class="row2">
+          <div><label>Tahun Ajaran</label><input type="text" id="inTahun" value="2026/2027"></div>
+          <div><label>Semester</label>
+            <select id="inSemester"><option>Ganjil</option><option>Genap</option></select>
+          </div>
+        </div>
+        <div class="row2">
+          <div><label>Kelas</label><select id="inKelas"></select></div>
+          <div><label>Mata Pelajaran</label><select id="inMapel"></select></div>
+        </div>
+        <label>Jenis Nilai</label>
+        <select id="inJenis"></select>
+        <button class="btn secondary block" onclick="muatSiswaInput()">Muat Data Siswa</button>
+        <div id="inputMsg"></div>
+      </div>
+
+      <div class="card hidden" id="cardTabelInput">
+        <h2 id="tabelInputTitle">Daftar Siswa</h2>
+        <table id="tabelInput">
+          <thead><tr><th>#</th><th>Nama</th><th>Nilai</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <button class="btn block" onclick="simpanNilaiInput()">Simpan Semua Nilai</button>
+        <div id="simpanMsg"></div>
+      </div>
+    </div>
+
+    <!-- CETAK LAPORAN -->
+    <div id="viewCetak" class="hidden">
+      <span class="back-link no-print" onclick="showView('menu')">&larr; Kembali</span>
+      <div class="card no-print">
+        <h2>Cetak Laporan per Kelas</h2>
+        <label>Kelas</label>
+        <select id="cetakKelas"></select>
+        <button class="btn block" onclick="muatLaporan()">Tampilkan Laporan</button>
+        <div id="cetakMsg"></div>
+      </div>
+      <div id="cetakToolbar" class="card hidden no-print">
+        <button class="btn block" onclick="window.print()">🖨️ Cetak / Simpan sebagai PDF</button>
+      </div>
+      <div id="cetakArea"></div>
+    </div>
+
+    <!-- PENGATURAN LAPORAN (admin) -->
+    <div id="viewKonfig" class="hidden">
+      <span class="back-link" onclick="showView('menu')">&larr; Kembali</span>
+      <div class="card">
+        <h2>Pengaturan Laporan Aktif</h2>
+        <p style="font-size:12px;color:var(--muted);">Pilih nilai yang saat ini akan dibagikan ke orang tua. Kolom di laporan cetak akan otomatis mengikuti pilihan ini.</p>
+        <div class="row2">
+          <div><label>Tahun Ajaran</label><input type="text" id="kfTahun" value="2026/2027"></div>
+          <div><label>Semester</label>
+            <select id="kfSemester"><option>Ganjil</option><option>Genap</option></select>
+          </div>
+        </div>
+        <label>Nilai yang ditampilkan di laporan</label>
+        <div class="checkgrid" id="kfCheckgrid"></div>
+        <label>Judul Laporan</label>
+        <input type="text" id="kfJudul" placeholder="contoh: LAPORAN HASIL SUMATIF 1 dan STS">
+        <button class="btn block" onclick="simpanKonfig()">Simpan Pengaturan</button>
+        <div id="konfigMsg"></div>
+      </div>
+      <div class="card" id="kfCurrent"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ================= KONFIGURASI API ================= */
+const API_URL = 'GANTI_DENGAN_URL_WEB_APP_ANDA'; // URL hasil Deploy Apps Script
+
+let CURRENT_USER = null;
+let META = null; // hasil getMeta: jenisNilai, mapel, kelasList, konfigurasi
+
+/* ================= HELPER FETCH (hindari CORS preflight) ================= */
+async function apiPost(payload){
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+/* ================= LOGIN ================= */
+async function doLogin(){
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const msgEl = document.getElementById('loginMsg');
+  msgEl.innerHTML = '<div class="msg">Memeriksa...</div>';
+  try{
+    const resp = await apiPost({ action:'login', username, password });
+    if(resp.success){
+      CURRENT_USER = resp.user;
+      msgEl.innerHTML = '';
+      await initApp();
+    } else {
+      msgEl.innerHTML = '<div class="msg err">'+resp.message+'</div>';
+    }
+  }catch(err){
+    msgEl.innerHTML = '<div class="msg err">Gagal terhubung ke server. Periksa API_URL. ('+err+')</div>';
+  }
+}
+
+function logout(){
+  CURRENT_USER = null;
+  document.getElementById('viewApp').classList.add('hidden');
+  document.getElementById('viewLogin').classList.remove('hidden');
+  document.getElementById('loginUsername').value='';
+  document.getElementById('loginPassword').value='';
+}
+
+/* ================= INIT SETELAH LOGIN ================= */
+async function initApp(){
+  document.getElementById('viewLogin').classList.add('hidden');
+  document.getElementById('viewApp').classList.remove('hidden');
+  document.getElementById('userLabel').innerText = CURRENT_USER.nama + ' ('+CURRENT_USER.role+')';
+
+  if(CURRENT_USER.role === 'admin'){
+    document.querySelectorAll('.admin-only').forEach(el=>el.classList.remove('hidden'));
+  }
+
+  const meta = await apiPost({ action:'getMeta' });
+  META = meta;
+
+  // isi dropdown jenis nilai
+  const inJenis = document.getElementById('inJenis');
+  inJenis.innerHTML = META.jenisNilai.map(j=>`<option value="${j.kode}">${j.label}</option>`).join('');
+
+  // isi dropdown kelas (filter jika guru punya kelasAmpu spesifik)
+  let kelasOptions = META.kelasList;
+  if(CURRENT_USER.role !== 'admin' && CURRENT_USER.kelasAmpu.length){
+    kelasOptions = META.kelasList.filter(k=>CURRENT_USER.kelasAmpu.includes(k));
+  }
+  document.getElementById('inKelas').innerHTML = kelasOptions.map(k=>`<option>${k}</option>`).join('');
+  document.getElementById('cetakKelas').innerHTML = META.kelasList.map(k=>`<option>${k}</option>`).join('');
+
+  // isi dropdown mapel (filter jika guru punya mapelAmpu spesifik)
+  let mapelOptions = META.mapel;
+  if(CURRENT_USER.role !== 'admin' && CURRENT_USER.mapelAmpu.length){
+    mapelOptions = META.mapel.filter(m=>CURRENT_USER.mapelAmpu.includes(m.nama));
+  }
+  document.getElementById('inMapel').innerHTML = mapelOptions.map(m=>`<option>${m.nama}</option>`).join('');
+
+  // checkbox pengaturan (admin)
+  const grid = document.getElementById('kfCheckgrid');
+  grid.innerHTML = META.jenisNilai.map(j=>`
+    <label class="checkitem"><input type="checkbox" value="${j.kode}" onchange="updateJudulSaran()"> ${j.singkatan}</label>
+  `).join('');
+  renderKonfigCurrent();
+
+  showView('menu');
+}
+
+function showView(name){
+  ['Menu','Input','Cetak','Konfig'].forEach(id=>document.getElementById('view'+id).classList.add('hidden'));
+  document.getElementById('view'+name.charAt(0).toUpperCase()+name.slice(1)).classList.remove('hidden');
+}
+
+/* ================= INPUT NILAI ================= */
+async function muatSiswaInput(){
+  const kelas = document.getElementById('inKelas').value;
+  const mapel = document.getElementById('inMapel').value;
+  const jenis = document.getElementById('inJenis').value;
+  const tahunAjaran = document.getElementById('inTahun').value;
+  const semester = document.getElementById('inSemester').value;
+  const msgEl = document.getElementById('inputMsg');
+  msgEl.innerHTML = '<div class="msg">Memuat...</div>';
+
+  const [siswaResp, nilaiResp] = await Promise.all([
+    apiPost({ action:'getSiswaKelas', kelas }),
+    apiPost({ action:'getNilaiInput', kelas, mapel, jenis, tahunAjaran, semester })
+  ]);
+
+  if(!siswaResp.success){ msgEl.innerHTML = '<div class="msg err">'+siswaResp.message+'</div>'; return; }
+
+  const jenisLabel = META.jenisNilai.find(j=>j.kode===jenis).label;
+  document.getElementById('tabelInputTitle').innerText = `${mapel} - ${jenisLabel} - Kelas ${kelas}`;
+
+  const tbody = document.querySelector('#tabelInput tbody');
+  tbody.innerHTML = siswaResp.siswa.map((s,i)=>`
+    <tr data-nis="${s.nis}">
+      <td>${i+1}</td>
+      <td>${s.nama}</td>
+      <td><input type="number" min="0" max="100" value="${nilaiResp.nilai[s.nis] ?? ''}"></td>
+    </tr>
+  `).join('');
+
+  document.getElementById('cardTabelInput').classList.remove('hidden');
+  msgEl.innerHTML = '';
+}
+
+async function simpanNilaiInput(){
+  const kelas = document.getElementById('inKelas').value;
+  const mapel = document.getElementById('inMapel').value;
+  const jenis = document.getElementById('inJenis').value;
+  const tahunAjaran = document.getElementById('inTahun').value;
+  const semester = document.getElementById('inSemester').value;
+
+  const data = [];
+  document.querySelectorAll('#tabelInput tbody tr').forEach(tr=>{
+    const nis = tr.getAttribute('data-nis');
+    const nilai = tr.querySelector('input').value;
+    data.push({ nis, nilai });
+  });
+
+  const msgEl = document.getElementById('simpanMsg');
+  msgEl.innerHTML = '<div class="msg">Menyimpan...</div>';
+  const resp = await apiPost({ action:'simpanNilai', kelas, mapel, jenis, tahunAjaran, semester, data });
+  msgEl.innerHTML = resp.success
+    ? '<div class="msg ok">'+resp.message+'</div>'
+    : '<div class="msg err">'+resp.message+'</div>';
+}
+
+/* ================= PENGATURAN LAPORAN (admin) ================= */
+function updateJudulSaran(){
+  const checked = [...document.querySelectorAll('#kfCheckgrid input:checked')].map(c=>{
+    return META.jenisNilai.find(j=>j.kode===c.value).singkatan;
+  });
+  if(checked.length){
+    document.getElementById('kfJudul').value = 'LAPORAN HASIL ' + checked.join(' dan ').toUpperCase();
+  }
+}
+
+async function simpanKonfig(){
+  const tahunAjaran = document.getElementById('kfTahun').value;
+  const semester = document.getElementById('kfSemester').value;
+  const kolomAktif = [...document.querySelectorAll('#kfCheckgrid input:checked')].map(c=>c.value);
+  const judulLaporan = document.getElementById('kfJudul').value;
+  const msgEl = document.getElementById('konfigMsg');
+
+  if(kolomAktif.length===0){
+    msgEl.innerHTML = '<div class="msg err">Pilih minimal satu jenis nilai.</div>';
+    return;
+  }
+  msgEl.innerHTML = '<div class="msg">Menyimpan...</div>';
+  const resp = await apiPost({ action:'simpanKonfigurasi', tahunAjaran, semester, kolomAktif, judulLaporan });
+  msgEl.innerHTML = resp.success ? '<div class="msg ok">'+resp.message+'</div>' : '<div class="msg err">'+resp.message+'</div>';
+  if(resp.success){
+    const metaResp = await apiPost({ action:'getMeta' });
+    META = metaResp;
+    renderKonfigCurrent();
+  }
+}
+
+function renderKonfigCurrent(){
+  const el = document.getElementById('kfCurrent');
+  const k = META.konfigurasi;
+  if(!k){ el.innerHTML = '<p style="font-size:13px;color:var(--muted);">Belum ada pengaturan tersimpan.</p>'; return; }
+  const labels = k.kolomAktif.map(kode=>META.jenisNilai.find(j=>j.kode===kode)?.singkatan || kode).join(', ');
+  el.innerHTML = `
+    <h2>Pengaturan Aktif Saat Ini</h2>
+    <p style="font-size:13px;"><b>Tahun Ajaran:</b> ${k.tahunAjaran} &nbsp; | &nbsp; <b>Semester:</b> ${k.semester}</p>
+    <p style="font-size:13px;"><b>Kolom nilai:</b> ${labels}</p>
+    <p style="font-size:13px;"><b>Judul:</b> ${k.judulLaporan}</p>
+  `;
+}
+
+/* ================= CETAK LAPORAN ================= */
+async function muatLaporan(){
+  const kelas = document.getElementById('cetakKelas').value;
+  const msgEl = document.getElementById('cetakMsg');
+  msgEl.innerHTML = '<div class="msg">Memuat laporan...</div>';
+  const resp = await apiPost({ action:'getLaporanKelas', kelas });
+  if(!resp.success){ msgEl.innerHTML = '<div class="msg err">'+resp.message+'</div>'; return; }
+  msgEl.innerHTML = '';
+  document.getElementById('cetakToolbar').classList.remove('hidden');
+  renderCetakArea(resp);
+}
+
+function renderCetakArea(data){
+  const area = document.getElementById('cetakArea');
+  const kolomLabel = data.kolomAktif.map(kode=>META.jenisNilai.find(j=>j.kode===kode)?.singkatan || kode);
+
+  area.innerHTML = data.laporan.map(item=>{
+    const s = item.siswa;
+
+    // kelompokkan baris mapel berdasarkan 'kelompok' agar tampil seperti dokumen asli
+    const rowsHtml = [];
+    let lastNo = null;
+    item.baris.forEach(b=>{
+      if(b.kelompok && b.no !== lastNo){
+        rowsHtml.push(`<tr><td colspan="${1+data.kolomAktif.length+1}"><b>${b.no}. ${b.kelompok}**</b></td></tr>`);
+      }
+      const noCell = b.kelompok ? '' : b.no;
+      const namaCell = b.kelompok ? '&nbsp;&nbsp;&nbsp;'+b.nama : b.nama;
+      const nilaiCells = data.kolomAktif.map(kode=>`<td class="num">${b.nilai[kode]}</td>`).join('');
+      rowsHtml.push(`<tr><td class="num">${noCell}</td><td>${namaCell}</td>${nilaiCells}</tr>`);
+      lastNo = b.no;
+    });
+
+    const totalCells = data.kolomAktif.map(kode=>`<td class="num"><b>${item.total[kode]}</b></td>`).join('');
+
+    return `
+    <div class="laporan-siswa">
+      <div class="lap-header">
+        <img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png">
+        <div class="lap-title">
+          <h3>PEMERINTAH KOTA BANDAR LAMPUNG</h3>
+          <h3>DINAS PENDIDIKAN</h3>
+          <h2>SMP NEGERI 13 BANDAR LAMPUNG</h2>
+          <p>Jl. Marga No 57, Kel. Beringin Raya, Kec. Kemiling, Bandar Lampung 35158</p>
+        </div>
+      </div>
+      <div class="lap-judul">${data.judulLaporan} - KELAS ${data.kelas}<br>SEMESTER ${data.semester.toUpperCase()} TAHUN PELAJARAN ${data.tahunAjaran}</div>
+      <div class="lap-info">
+        <div><b>Nama</b> : ${s.nama}<br><b>NIS</b> : ${s.nis}</div>
+        <div><b>Kelas</b> : ${s.kelas}<br><b>NISN</b> : ${s.nisn}</div>
+      </div>
+      <table class="lap-table">
+        <thead><tr><th>No</th><th>Mata Pelajaran</th>${kolomLabel.map(l=>`<th>${l}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${rowsHtml.join('')}
+          <tr><td colspan="2" style="text-align:right;"><b>Jumlah Nilai</b></td>${totalCells}</tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;font-style:italic;margin-top:10px;">Telah diterima dan diperiksa orang tua / wali murid</p>
+      <div class="lap-sign">
+        <div>
+          <p>Mengetahui<br>Kepala SMPN 13 Bandar Lampung</p>
+          <div class="space"></div>
+          <p><b>____________________</b></p>
+        </div>
+        <div>
+          <p>Bandar Lampung, ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}<br>Wali Kelas</p>
+          <div class="space"></div>
+          <p><b>____________________</b></p>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
