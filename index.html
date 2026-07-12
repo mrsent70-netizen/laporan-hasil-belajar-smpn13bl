@@ -53,12 +53,12 @@
 
   /* ===== LAPORAN CETAK ===== */
   .laporan-siswa{background:#fff;border:1px solid #333;padding:20px;margin-bottom:24px;font-size:13px;}
-  .lap-header{text-align:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
-  .lap-header img{width:55px;height:55px;object-fit:contain;}
+  .lap-header{text-align:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+  .lap-header img{width:65px;height:65px;object-fit:contain;flex-shrink:0;}
   .lap-header .lap-title{flex:1;}
-  .lap-header h3{margin:0;font-size:13px;}
-  .lap-header h2{margin:2px 0;font-size:15px;}
-  .lap-header p{margin:0;font-size:10px;}
+  .lap-header h1{margin:0;font-size:16px;font-weight:800;letter-spacing:.3px;}
+  .lap-header h2{margin:1px 0 4px;font-size:19px;font-weight:800;letter-spacing:.3px;}
+  .lap-header p{margin:0;font-size:10.5px;}
   .lap-judul{text-align:center;font-weight:bold;font-size:14px;margin:10px 0;text-transform:uppercase;}
   .lap-info{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;}
   .lap-info div{width:48%;}
@@ -199,7 +199,12 @@
 
 <script>
 /* ================= KONFIGURASI API ================= */
-const API_URL = 'https://script.google.com/macros/s/AKfycbyOOl5n8fsfZWEWkaPXBocbQqtk9400_lk4ALQU2U6Ra2xaKIrLzMEyFYgNoQLjWxQb/exec'; // URL hasil Deploy Apps Script
+const API_URL = 'https://script.google.com/macros/s/AKfycbxI7vOJj6KPtfggwKTSKfTpye5VHCCB67mnnYKejBmBnUqsym2WYgsuixjy0IRUw461/exec'; // URL hasil Deploy Apps Script
+
+// URL logo untuk kop laporan cetak & halaman login. Ganti LOGO_KOTA_URL dengan link logo
+// Kota Bandar Lampung Anda sendiri (upload ke ibb.co lalu tempel link "Direct link" di sini).
+const LOGO_KOTA_URL = 'https://vectorez.biz.id/wp-content/uploads/2024/09/Logo-Kota-Bandar-Lampung-Ragom-Gawi.jpg';
+const LOGO_SMP_URL = 'https://i.ibb.co.com/Zz9dbRD/logosmp13.png';
 
 let CURRENT_USER = null;
 let META = null; // hasil getMeta: jenisNilai, mapel, kelasList, konfigurasi
@@ -448,13 +453,14 @@ function renderCetakArea(data){
     return `
     <div class="laporan-siswa">
       <div class="lap-header">
-        <img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png">
+        <img src="${LOGO_KOTA_URL}" alt="Logo Kota Bandar Lampung">
         <div class="lap-title">
-          <h3>PEMERINTAH KOTA BANDAR LAMPUNG</h3>
-          <h3>DINAS PENDIDIKAN</h3>
+          <h1>PEMERINTAH KOTA BANDAR LAMPUNG</h1>
           <h2>SMP NEGERI 13 BANDAR LAMPUNG</h2>
-          <p>Jl. Marga No 57, Kel. Beringin Raya, Kec. Kemiling, Bandar Lampung 35158</p>
+          <p>Alamat: Jl. Marga No 57, Kel. Beringin Raya, Kec. Kemiling, Bandar Lampung 35158</p>
+          <p>Website: smpn13bandarlampung.sch.id, Telp. 0721-271054, Kode Pos 35158</p>
         </div>
+        <img src="${LOGO_SMP_URL}" alt="Logo SMP Negeri 13 Bandar Lampung">
       </div>
       <div class="lap-judul">${data.judulLaporan} - KELAS ${data.kelas}<br>SEMESTER ${data.semester.toUpperCase()} TAHUN PELAJARAN ${data.tahunAjaran}</div>
       <div class="lap-info">
