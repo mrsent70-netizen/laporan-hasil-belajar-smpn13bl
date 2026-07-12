@@ -136,8 +136,8 @@
           </div>
         </div>
         <div class="row2">
+          <div><label>Mata Pelajaran</label><select id="inMapel" onchange="onMapelChange()"></select></div>
           <div><label>Kelas</label><select id="inKelas"></select></div>
-          <div><label>Mata Pelajaran</label><select id="inMapel"></select></div>
         </div>
         <label>Jenis Nilai</label>
         <select id="inJenis"></select>
@@ -259,20 +259,22 @@ async function initApp(){
   const inJenis = document.getElementById('inJenis');
   inJenis.innerHTML = META.jenisNilai.map(j=>`<option value="${j.kode}">${j.label}</option>`).join('');
 
-  // isi dropdown kelas (filter jika guru punya kelasAmpu spesifik)
-  let kelasOptions = META.kelasList;
-  if(CURRENT_USER.role !== 'admin' && CURRENT_USER.kelasAmpu.length){
-    kelasOptions = META.kelasList.filter(k=>CURRENT_USER.kelasAmpu.includes(k));
-  }
-  document.getElementById('inKelas').innerHTML = kelasOptions.map(k=>`<option>${k}</option>`).join('');
-  document.getElementById('cetakKelas').innerHTML = META.kelasList.map(k=>`<option>${k}</option>`).join('');
-
-  // isi dropdown mapel (filter jika guru punya mapelAmpu spesifik)
-  let mapelOptions = META.mapel;
+  // isi dropdown mata pelajaran (guru hanya melihat mapel yang diampu sendiri)
+  let mapelOptions = META.mapel.map(m=>m.nama);
   if(CURRENT_USER.role !== 'admin' && CURRENT_USER.mapelAmpu.length){
-    mapelOptions = META.mapel.filter(m=>CURRENT_USER.mapelAmpu.includes(m.nama));
+    mapelOptions = CURRENT_USER.mapelAmpu;
   }
-  document.getElementById('inMapel').innerHTML = mapelOptions.map(m=>`<option>${m.nama}</option>`).join('');
+  document.getElementById('inMapel').innerHTML = mapelOptions.map(m=>`<option>${m}</option>`).join('');
+
+  // isi dropdown kelas mengikuti mapel yang sedang terpilih (khusus guru)
+  onMapelChange();
+
+  // dropdown kelas di menu Cetak Laporan: guru hanya melihat kelas yang ia ampu (gabungan semua mapelnya)
+  let kelasCetakOptions = META.kelasList;
+  if(CURRENT_USER.role !== 'admin' && CURRENT_USER.kelasAmpu.length){
+    kelasCetakOptions = META.kelasList.filter(k=>CURRENT_USER.kelasAmpu.includes(k));
+  }
+  document.getElementById('cetakKelas').innerHTML = kelasCetakOptions.map(k=>`<option>${k}</option>`).join('');
 
   // checkbox pengaturan (admin)
   const grid = document.getElementById('kfCheckgrid');
@@ -287,6 +289,26 @@ async function initApp(){
 function showView(name){
   ['Menu','Input','Cetak','Konfig'].forEach(id=>document.getElementById('view'+id).classList.add('hidden'));
   document.getElementById('view'+name.charAt(0).toUpperCase()+name.slice(1)).classList.remove('hidden');
+}
+
+// Isi dropdown Kelas berdasarkan Mapel yang sedang dipilih.
+// Admin: selalu melihat semua kelas (bebas kombinasi apa pun).
+// Guru: hanya melihat kelas yang benar-benar ia ampu UNTUK mapel yang dipilih (dari data assignments saat login).
+function onMapelChange(){
+  const mapelTerpilih = document.getElementById('inMapel').value;
+  let kelasOptions;
+
+  if(CURRENT_USER.role === 'admin' || !CURRENT_USER.assignments || CURRENT_USER.assignments.length === 0){
+    kelasOptions = META.kelasList;
+  } else {
+    const assignment = CURRENT_USER.assignments.find(a => a.mapel === mapelTerpilih);
+    kelasOptions = assignment ? assignment.kelas : [];
+  }
+
+  const inKelas = document.getElementById('inKelas');
+  inKelas.innerHTML = kelasOptions.length
+    ? kelasOptions.map(k=>`<option>${k}</option>`).join('')
+    : `<option disabled selected>Tidak ada kelas untuk mapel ini</option>`;
 }
 
 /* ================= INPUT NILAI ================= */
