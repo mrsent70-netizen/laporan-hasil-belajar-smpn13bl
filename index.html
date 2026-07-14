@@ -69,7 +69,7 @@
   .lap-note{font-size:11px;font-style:italic;margin-top:10px;}
   .lap-sign{display:flex;justify-content:space-between;margin-top:26px;font-size:12px;}
   .lap-sign div{width:45%;text-align:center;}
-  .lap-sign .space{height:60px;}
+  .lap-sign .space{height:60px;display:flex;align-items:center;justify-content:center;}
   @page{ size:A4; margin:14mm; }
   @media print{
     body *{visibility:hidden;}
@@ -92,7 +92,7 @@
     table.lap-table th, table.lap-table td{font-size:13.5px;padding:8px 9px;}
     .lap-note{margin-top:auto;padding-top:20px;}
     .lap-sign{font-size:13px;margin-top:14px;}
-    .lap-sign .space{height:75px;}
+    .lap-sign .space{height:75px;display:flex;align-items:center;justify-content:center;}
     .no-print{display:none !important;}
   }
   @media (max-width:520px){
@@ -224,6 +224,10 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbyOOl5n8fsfZWEWkaPXBocb
 // Kota Bandar Lampung Anda sendiri (upload ke ibb.co lalu tempel link "Direct link" di sini).
 const LOGO_KOTA_URL = 'logo%20kota%20BL%20ok.png'; // nama file: "logo kota BL ok.png" (spasi di-encode jadi %20)
 const LOGO_SMP_URL = 'https://i.ibb.co.com/Zz9dbRD/logosmp13.png';
+
+// URL gambar scan tanda tangan Kepala Sekolah (transparan/PNG lebih rapi). Upload filenya ke
+// GitHub sejajar dengan index.html, lalu isi nama filenya di sini. Kosongkan ('') kalau belum ada.
+const TTD_KEPSEK_URL = '';
 
 let CURRENT_USER = null;
 let META = null; // hasil getMeta: jenisNilai, mapel, kelasList, konfigurasi
@@ -497,7 +501,7 @@ function renderCetakArea(data){
       <div class="lap-sign">
         <div>
           <p>Mengetahui<br>Kepala SMPN 13 Bandar Lampung</p>
-          <div class="space"></div>
+          <div class="space">${TTD_KEPSEK_URL ? `<img src="${TTD_KEPSEK_URL}" alt="Tanda tangan Kepala Sekolah" style="height:100%;max-height:100%;object-fit:contain;">` : ''}</div>
           <p><b>${data.kepalaSekolah && data.kepalaSekolah.nama ? data.kepalaSekolah.nama : '____________________'}</b>${data.kepalaSekolah && data.kepalaSekolah.nip ? '<br>NIP. '+data.kepalaSekolah.nip : ''}</p>
         </div>
         <div>
