@@ -69,7 +69,7 @@
   .lap-note{font-size:11px;font-style:italic;margin-top:10px;}
   .lap-sign{display:flex;justify-content:space-between;margin-top:26px;font-size:12px;}
   .lap-sign div{width:45%;text-align:center;}
-  .lap-sign .space{height:60px;display:flex;align-items:center;justify-content:center;}
+  .lap-sign .space{height:90px;display:flex;align-items:center;justify-content:center;}
   @page{ size:A4; margin:14mm; }
   @media print{
     body *{visibility:hidden;}
@@ -92,7 +92,7 @@
     table.lap-table th, table.lap-table td{font-size:13.5px;padding:8px 9px;}
     .lap-note{margin-top:auto;padding-top:20px;}
     .lap-sign{font-size:13px;margin-top:14px;}
-    .lap-sign .space{height:75px;display:flex;align-items:center;justify-content:center;}
+    .lap-sign .space{height:105px;display:flex;align-items:center;justify-content:center;}
     .no-print{display:none !important;}
   }
   @media (max-width:520px){
@@ -227,7 +227,7 @@ const LOGO_SMP_URL = 'https://i.ibb.co.com/Zz9dbRD/logosmp13.png';
 
 // URL gambar scan tanda tangan Kepala Sekolah (transparan/PNG lebih rapi). Upload filenya ke
 // GitHub sejajar dengan index.html, lalu isi nama filenya di sini. Kosongkan ('') kalau belum ada.
-const TTD_KEPSEK_URL = 'ttd-kepsek.png';
+const TTD_KEPSEK_URL = 'ttd-kepsek.png'; // file ini WAJIB diupload ke folder yang sama dengan index.html di GitHub
 
 let CURRENT_USER = null;
 let META = null; // hasil getMeta: jenisNilai, mapel, kelasList, konfigurasi
@@ -501,7 +501,7 @@ function renderCetakArea(data){
       <div class="lap-sign">
         <div>
           <p>Mengetahui<br>Kepala SMPN 13 Bandar Lampung</p>
-          <div class="space">${TTD_KEPSEK_URL ? `<img src="${TTD_KEPSEK_URL}" alt="Tanda tangan Kepala Sekolah" style="height:100%;max-height:100%;object-fit:contain;">` : ''}</div>
+          <div class="space">${TTD_KEPSEK_URL ? `<img src="${TTD_KEPSEK_URL}" alt="Tanda tangan Kepala Sekolah" style="display:block;margin:0 auto;height:100%;max-height:100%;width:auto;max-width:80%;object-fit:contain;">` : ''}</div>
           <p><b>${data.kepalaSekolah && data.kepalaSekolah.nama ? data.kepalaSekolah.nama : '____________________'}</b>${data.kepalaSekolah && data.kepalaSekolah.nip ? '<br>NIP. '+data.kepalaSekolah.nip : ''}</p>
         </div>
         <div>
