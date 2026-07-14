@@ -498,12 +498,12 @@ function renderCetakArea(data){
         <div>
           <p>Mengetahui<br>Kepala SMPN 13 Bandar Lampung</p>
           <div class="space"></div>
-          <p><b>____________________</b></p>
+          <p><b>${data.kepalaSekolah && data.kepalaSekolah.nama ? data.kepalaSekolah.nama : '____________________'}</b>${data.kepalaSekolah && data.kepalaSekolah.nip ? '<br>NIP. '+data.kepalaSekolah.nip : ''}</p>
         </div>
         <div>
           <p>Bandar Lampung, ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}<br>Wali Kelas</p>
           <div class="space"></div>
-          <p><b>____________________</b></p>
+          <p><b>${data.waliKelas && data.waliKelas.nama ? data.waliKelas.nama : '____________________'}</b>${data.waliKelas && data.waliKelas.nip ? '<br>NIP. '+data.waliKelas.nip : ''}</p>
         </div>
       </div>
     </div>`;
