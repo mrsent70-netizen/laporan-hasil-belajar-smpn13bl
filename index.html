@@ -64,6 +64,15 @@
   .lap-info div{width:48%;}
   .lap-info b{display:inline-block;width:130px;}
   table.lap-table th, table.lap-table td{border:1px solid #000;font-size:12px;padding:5px 6px;}
+
+  /* ===== LEGGER NILAI ===== */
+  .legger-wrap{background:#fff;padding:16px;}
+  table.legger-table{width:100%;border-collapse:collapse;font-size:10px;margin-top:10px;}
+  table.legger-table th, table.legger-table td{border:1px solid #000;padding:3px 4px;text-align:center;white-space:nowrap;}
+  table.legger-table th{background:#e9e9e9;}
+  table.legger-table td.legger-nama{text-align:left;white-space:normal;min-width:110px;}
+  table.legger-table td.num{text-align:center;}
+  .legger-sign{margin-top:20px;}
   table.lap-table th{background:#e9e9e9;text-align:center;}
   table.lap-table td.num{text-align:center;}
   .lap-note{font-size:11px;font-style:italic;margin-top:10px;}
@@ -75,6 +84,8 @@
     body *{visibility:hidden;}
     #cetakArea, #cetakArea *{visibility:visible;}
     #cetakArea{position:absolute;left:0;top:0;width:100%;}
+    #leggerArea, #leggerArea *{visibility:visible;}
+    #leggerArea{position:absolute;left:0;top:0;width:100%;overflow:visible !important;}
     .laporan-siswa{
       page-break-after:always;border:none;padding:0;margin-bottom:0;
       min-height:269mm;
@@ -93,6 +104,11 @@
     .lap-note{margin-top:auto;padding-top:8px;}
     .lap-sign{font-size:12.5px;margin-top:4px;}
     .lap-sign .space{height:70px;line-height:70px;text-align:center;}
+    .legger-wrap{padding:0;}
+    table.legger-table{font-size:8.5px;}
+    table.legger-table th, table.legger-table td{padding:2px 3px;}
+    table.legger-table td.legger-nama{min-width:90px;}
+    .legger-sign{margin-top:14px;}
     .no-print{display:none !important;}
   }
   @media (max-width:520px){
@@ -139,6 +155,7 @@
       <div class="grid-menu">
         <div class="menu-item" onclick="showView('input')"><span class="ico">📝</span>Input Nilai</div>
         <div class="menu-item" onclick="showView('cetak')"><span class="ico">🖨️</span>Cetak Laporan</div>
+        <div class="menu-item" onclick="showView('legger')"><span class="ico">📊</span>Legger Nilai</div>
         <div class="menu-item admin-only hidden" onclick="showView('konfig')"><span class="ico">⚙️</span>Pengaturan Laporan</div>
       </div>
     </div>
@@ -189,6 +206,33 @@
         <button class="btn block" onclick="window.print()">🖨️ Cetak / Simpan sebagai PDF</button>
       </div>
       <div id="cetakArea"></div>
+    </div>
+
+    <!-- LEGGER NILAI -->
+    <div id="viewLegger" class="hidden">
+      <span class="back-link no-print" onclick="showView('menu')">&larr; Kembali</span>
+      <div class="card no-print">
+        <h2>Legger Nilai per Kelas</h2>
+        <p style="font-size:12px;color:var(--muted);">
+          Semester Ganjil: S1, S2, S3, STS Ganjil, SAS (semua kelas).<br>
+          Semester Genap kelas 7 &amp; 8: S1, S2, STS Genap, SAT.<br>
+          Semester Genap kelas 9: S1, S2, LUS, US.
+        </p>
+        <div class="row2">
+          <div><label>Tahun Ajaran</label><input type="text" id="leggerTahun" value="2026/2027"></div>
+          <div><label>Semester</label>
+            <select id="leggerSemester"><option>Ganjil</option><option>Genap</option></select>
+          </div>
+        </div>
+        <label>Kelas</label>
+        <select id="leggerKelas"></select>
+        <button class="btn block" onclick="muatLegger()">Tampilkan Legger</button>
+        <div id="leggerMsg"></div>
+      </div>
+      <div id="leggerToolbar" class="card hidden no-print">
+        <button class="btn block" onclick="printLegger()">🖨️ Cetak Legger (Landscape)</button>
+      </div>
+      <div id="leggerArea" style="overflow-x:auto;"></div>
     </div>
 
     <!-- PENGATURAN LAPORAN (admin) -->
@@ -303,6 +347,7 @@ async function initApp(){
     kelasCetakOptions = META.kelasList.filter(k=>CURRENT_USER.kelasAmpu.includes(k));
   }
   document.getElementById('cetakKelas').innerHTML = kelasCetakOptions.map(k=>`<option>${k}</option>`).join('');
+  document.getElementById('leggerKelas').innerHTML = kelasCetakOptions.map(k=>`<option>${k}</option>`).join('');
 
   // checkbox pengaturan (admin)
   const grid = document.getElementById('kfCheckgrid');
@@ -315,7 +360,7 @@ async function initApp(){
 }
 
 function showView(name){
-  ['Menu','Input','Cetak','Konfig'].forEach(id=>document.getElementById('view'+id).classList.add('hidden'));
+  ['Menu','Input','Cetak','Legger','Konfig'].forEach(id=>document.getElementById('view'+id).classList.add('hidden'));
   document.getElementById('view'+name.charAt(0).toUpperCase()+name.slice(1)).classList.remove('hidden');
 }
 
@@ -440,6 +485,8 @@ function renderKonfigCurrent(){
 
 /* ================= CETAK LAPORAN ================= */
 async function muatLaporan(){
+  document.getElementById('leggerArea').innerHTML = '';
+  document.getElementById('leggerToolbar').classList.add('hidden');
   const kelas = document.getElementById('cetakKelas').value;
   const msgEl = document.getElementById('cetakMsg');
   msgEl.innerHTML = '<div class="msg">Memuat laporan...</div>';
@@ -512,6 +559,94 @@ function renderCetakArea(data){
       </div>
     </div>`;
   }).join('');
+}
+
+/* ================= LEGGER NILAI ================= */
+async function muatLegger(){
+  document.getElementById('cetakArea').innerHTML = '';
+  document.getElementById('cetakToolbar').classList.add('hidden');
+  const kelas = document.getElementById('leggerKelas').value;
+  const tahunAjaran = document.getElementById('leggerTahun').value;
+  const semester = document.getElementById('leggerSemester').value;
+  const msgEl = document.getElementById('leggerMsg');
+  msgEl.innerHTML = '<div class="msg">Memuat legger...</div>';
+
+  const resp = await apiPost({ action:'getLegger', kelas, tahunAjaran, semester });
+  if(!resp.success){ msgEl.innerHTML = '<div class="msg err">'+resp.message+'</div>'; return; }
+  msgEl.innerHTML = '';
+  document.getElementById('leggerToolbar').classList.remove('hidden');
+  renderLeggerArea(resp);
+}
+
+function renderLeggerArea(data){
+  const area = document.getElementById('leggerArea');
+  const kolomLabel = data.kolomAktif.map(kode=>META.jenisNilai.find(j=>j.kode===kode)?.singkatan || kode);
+  const totalKolomNilai = data.mapelRows.length * data.kolomAktif.length;
+
+  // Header baris 1: nama mapel (colspan = jumlah kolom nilai)
+  const headerMapel = data.mapelRows.map(m=>`<th colspan="${data.kolomAktif.length}">${m.nama}</th>`).join('');
+  // Header baris 2: jenis nilai per mapel
+  const headerJenis = data.mapelRows.map(()=>kolomLabel.map(l=>`<th>${l}</th>`).join('')).join('');
+
+  const bodyRows = data.siswa.map((item,i)=>{
+    const s = item.siswa;
+    const nilaiCells = item.nilai.map(perMapel=>
+      data.kolomAktif.map(kode=>`<td class="num">${perMapel[kode]}</td>`).join('')
+    ).join('');
+    return `<tr><td class="num">${i+1}</td><td class="legger-nama">${s.nama}</td><td class="num">${s.nis}</td>${nilaiCells}</tr>`;
+  }).join('');
+
+  area.innerHTML = `
+    <div class="legger-wrap">
+      <div class="lap-header">
+        <img src="${LOGO_KOTA_URL}" alt="Logo Kota Bandar Lampung">
+        <div class="lap-title">
+          <h1>PEMERINTAH KOTA BANDAR LAMPUNG</h1>
+          <h2>SMP NEGERI 13 BANDAR LAMPUNG</h2>
+          <p>Alamat: Jl. Marga No 57, Kel. Beringin Raya, Kec. Kemiling, Bandar Lampung 35158</p>
+          <p>Website: smpn13bandarlampung.sch.id, Telp. 0721-271054, Kode Pos 35158</p>
+        </div>
+        <img src="${LOGO_SMP_URL}" alt="Logo SMP Negeri 13 Bandar Lampung">
+      </div>
+      <div class="lap-judul">LEGGER NILAI - KELAS ${data.kelas}<br>SEMESTER ${data.semester.toUpperCase()} TAHUN PELAJARAN ${data.tahunAjaran}</div>
+      <table class="legger-table">
+        <thead>
+          <tr><th rowspan="2">No</th><th rowspan="2">Nama Siswa</th><th rowspan="2">NIS</th>${headerMapel}</tr>
+          <tr>${headerJenis}</tr>
+        </thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+      <div class="lap-sign legger-sign">
+        <div>
+          <p>Mengetahui<br>Kepala SMPN 13 Bandar Lampung</p>
+          <div class="space">${TTD_KEPSEK_URL ? `<img src="${TTD_KEPSEK_URL}" alt="Tanda tangan Kepala Sekolah" width="150" height="70" style="display:block;margin:0 auto;object-fit:contain;">` : ''}</div>
+          <p><b>${data.kepalaSekolah && data.kepalaSekolah.nama ? data.kepalaSekolah.nama : '____________________'}</b>${data.kepalaSekolah && data.kepalaSekolah.nip ? '<br>NIP. '+data.kepalaSekolah.nip : ''}</p>
+        </div>
+        <div>
+          <p>Bandar Lampung, ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}<br>Wali Kelas</p>
+          <div class="space"></div>
+          <p><b>${data.waliKelas && data.waliKelas.nama ? data.waliKelas.nama : '____________________'}</b>${data.waliKelas && data.waliKelas.nip ? '<br>NIP. '+data.waliKelas.nip : ''}</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+// Cetak legger dalam orientasi LANDSCAPE (berbeda dari laporan yang portrait),
+// dengan cara menyisipkan aturan @page landscape sementara, khusus saat mencetak legger.
+function printLegger(){
+  const style = document.createElement('style');
+  style.id = 'leggerPageStyle';
+  style.innerHTML = '@page{ size:A4 landscape; margin:10mm; }';
+  document.head.appendChild(style);
+
+  const cleanup = () => {
+    const el = document.getElementById('leggerPageStyle');
+    if(el) el.remove();
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+
+  window.print();
 }
 </script>
 </body>
