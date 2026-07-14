@@ -584,7 +584,7 @@ function renderLeggerArea(data){
   const totalKolomNilai = data.mapelRows.length * data.kolomAktif.length;
 
   // Header baris 1: nama mapel (colspan = jumlah kolom nilai)
-  const headerMapel = data.mapelRows.map(m=>`<th colspan="${data.kolomAktif.length}">${m.nama}</th>`).join('');
+  const headerMapel = data.mapelRows.map(m=>`<th colspan="${data.kolomAktif.length}">${m.singkatan || m.nama}</th>`).join('');
   // Header baris 2: jenis nilai per mapel
   const headerJenis = data.mapelRows.map(()=>kolomLabel.map(l=>`<th>${l}</th>`).join('')).join('');
 
