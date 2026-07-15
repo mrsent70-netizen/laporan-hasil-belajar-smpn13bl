@@ -69,7 +69,7 @@
   .legger-wrap{background:#fff;padding:16px;}
   table.legger-table{width:100%;border-collapse:collapse;font-size:10px;margin-top:10px;}
   table.legger-table th, table.legger-table td{border:1px solid #000;padding:3px 4px;text-align:center;white-space:nowrap;}
-  table.legger-table th{background:#e9e9e9;}
+  table.legger-table th{background:#e9e9e9;white-space:normal;word-break:break-word;}
   table.legger-table td.legger-nama{text-align:left;white-space:normal;min-width:110px;}
   table.legger-table td.num{text-align:center;}
   .legger-sign{margin-top:20px;}
@@ -105,9 +105,9 @@
     .lap-sign{font-size:12.5px;margin-top:4px;}
     .lap-sign .space{height:70px;line-height:70px;text-align:center;}
     .legger-wrap{padding:0;}
-    table.legger-table{font-size:8.5px;}
-    table.legger-table th, table.legger-table td{padding:2px 3px;}
-    table.legger-table td.legger-nama{min-width:90px;}
+    table.legger-table{font-size:7.5px;table-layout:fixed;width:100%;}
+    table.legger-table th, table.legger-table td{padding:1.5px 2px;overflow:hidden;}
+    table.legger-table td.legger-nama{min-width:0;width:auto;}
     .legger-sign{margin-top:14px;}
     .no-print{display:none !important;}
   }
@@ -583,6 +583,15 @@ function renderLeggerArea(data){
   const kolomLabel = data.kolomAktif.map(kode=>META.jenisNilai.find(j=>j.kode===kode)?.singkatan || kode);
   const totalKolomNilai = data.mapelRows.length * data.kolomAktif.length;
 
+  // Lebar kolom presisi (dipakai saat cetak lewat table-layout:fixed)
+  const lebarNilai = (82 / totalKolomNilai).toFixed(2);
+  const colgroup = `<colgroup>
+    <col style="width:3%">
+    <col style="width:11%">
+    <col style="width:4%">
+    ${Array(totalKolomNilai).fill(`<col style="width:${lebarNilai}%">`).join('')}
+  </colgroup>`;
+
   // Header baris 1: nama mapel (colspan = jumlah kolom nilai)
   const headerMapel = data.mapelRows.map(m=>`<th colspan="${data.kolomAktif.length}">${m.singkatan || m.nama}</th>`).join('');
   // Header baris 2: jenis nilai per mapel
@@ -610,6 +619,7 @@ function renderLeggerArea(data){
       </div>
       <div class="lap-judul">LEGGER NILAI - KELAS ${data.kelas}<br>SEMESTER ${data.semester.toUpperCase()} TAHUN PELAJARAN ${data.tahunAjaran}</div>
       <table class="legger-table">
+        ${colgroup}
         <thead>
           <tr><th rowspan="2">No</th><th rowspan="2">Nama Siswa</th><th rowspan="2">NIS</th>${headerMapel}</tr>
           <tr>${headerJenis}</tr>
