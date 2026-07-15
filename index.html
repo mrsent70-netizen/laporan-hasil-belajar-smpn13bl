@@ -104,19 +104,19 @@
     .lap-note{margin-top:auto;padding-top:8px;}
     .lap-sign{font-size:12.5px;margin-top:4px;}
     .lap-sign .space{height:70px;line-height:70px;text-align:center;}
-    .legger-wrap{padding:0;}
-    .legger-wrap .lap-header{gap:10px;padding-bottom:4px;margin-bottom:4px;}
-    .legger-wrap .lap-header img{width:40px;height:40px;}
-    .legger-wrap .lap-header h1{font-size:11px;}
-    .legger-wrap .lap-header h2{font-size:13px;}
-    .legger-wrap .lap-header p{font-size:7.5px;}
-    .legger-wrap .lap-judul{font-size:10px;margin:4px 0;}
-    table.legger-table{font-size:6.5px;table-layout:fixed;width:100%;margin-top:4px;line-height:1.15;}
-    table.legger-table th, table.legger-table td{padding:1px 2px;overflow:hidden;}
-    table.legger-table th{font-size:6px;line-height:1.05;}
+    .legger-wrap{padding:0;min-height:190mm;display:flex;flex-direction:column;}
+    .legger-wrap .lap-header{gap:14px;padding-bottom:6px;margin-bottom:6px;}
+    .legger-wrap .lap-header img{width:55px;height:55px;}
+    .legger-wrap .lap-header h1{font-size:14px;}
+    .legger-wrap .lap-header h2{font-size:17px;}
+    .legger-wrap .lap-header p{font-size:9.5px;}
+    .legger-wrap .lap-judul{font-size:13px;margin:8px 0;}
+    table.legger-table{font-size:9px;table-layout:fixed;width:100%;margin-top:8px;line-height:1.3;}
+    table.legger-table th, table.legger-table td{padding:3px 4px;overflow:hidden;}
+    table.legger-table th{font-size:8.5px;line-height:1.15;}
     table.legger-table td.legger-nama{min-width:0;width:auto;}
-    .legger-sign{margin-top:6px;font-size:9px;}
-    .legger-sign .space{height:40px;line-height:40px;}
+    .legger-sign{margin-top:auto;padding-top:16px;font-size:11px;}
+    .legger-sign .space{height:55px;line-height:55px;}
     .no-print{display:none !important;}
   }
   @media (max-width:520px){
@@ -637,7 +637,7 @@ function renderLeggerArea(data){
       <div class="lap-sign legger-sign">
         <div>
           <p>Mengetahui<br>Kepala SMPN 13 Bandar Lampung</p>
-          <div class="space">${TTD_KEPSEK_URL ? `<img src="${TTD_KEPSEK_URL}" alt="Tanda tangan Kepala Sekolah" width="90" height="40" style="display:block;margin:0 auto;object-fit:contain;">` : ''}</div>
+          <div class="space">${TTD_KEPSEK_URL ? `<img src="${TTD_KEPSEK_URL}" alt="Tanda tangan Kepala Sekolah" width="120" height="55" style="display:block;margin:0 auto;object-fit:contain;">` : ''}</div>
           <p><b>${data.kepalaSekolah && data.kepalaSekolah.nama ? data.kepalaSekolah.nama : '____________________'}</b>${data.kepalaSekolah && data.kepalaSekolah.nip ? '<br>NIP. '+data.kepalaSekolah.nip : ''}</p>
         </div>
         <div>
